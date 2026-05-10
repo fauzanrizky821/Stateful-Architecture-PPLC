@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Upload Musik</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'musik/style.css' %}" />
+  </head>
+  <body>
+    <main class="page-shell">
+      <nav class="topbar">
+        <a href="{% url 'upload_musik' %}" class="brand">musik</a>
+        <a href="{% url 'library_musik' %}" class="nav-link">Lihat daftar musik</a>
+      </nav>
+
+      <section class="hero">
+        <p class="eyebrow">Praktikum 5</p>
+        <h1>Upload Musik</h1>
+        <p class="hero-copy">Simpan data musik dan upload MP3 langsung ke Azure Blob Storage.</p>
+      </section>
+
+      <section class="card">
+        {% if message %}
+          <div class="message">{{ message }}</div>
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data" class="music-form">
+          {% csrf_token %}
+
+          <div class="field">
+            <label for="{{ form.judul.id_for_label }}">{{ form.judul.label }}</label>
+            {{ form.judul }}
+            {% if form.judul.errors %}<div class="error">{{ form.judul.errors|striptags }}</div>{% endif %}
+          </div>
+
+          <div class="field">
+            <label for="{{ form.penyanyi.id_for_label }}">{{ form.penyanyi.label }}</label>
+            {{ form.penyanyi }}
+            {% if form.penyanyi.errors %}<div class="error">{{ form.penyanyi.errors|striptags }}</div>{% endif %}
+          </div>
+
+          <div class="field file-field">
+            <label for="{{ form.file_mp3.id_for_label }}">{{ form.file_mp3.label }}</label>
+            {{ form.file_mp3 }}
+            <small>Hanya format .mp3</small>
+            {% if form.file_mp3.errors %}<div class="error">{{ form.file_mp3.errors|striptags }}</div>{% endif %}
+          </div>
+
+          {% if form.non_field_errors %}
+            <div class="error">{{ form.non_field_errors|striptags }}</div>
+          {% endif %}
+
+          <div class="actions">
+            <button type="submit" class="submit-btn">Simpan ke Azure</button>
+          </div>
+        </form>
+      </section>
+    </main>
+  </body>
+</html>

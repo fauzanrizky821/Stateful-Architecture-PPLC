@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Daftar Musik</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'musik/style.css' %}" />
+  </head>
+  <body>
+    <main class="page-shell">
+      <nav class="topbar">
+        <a href="{% url 'upload_musik' %}" class="brand">musik</a>
+        <a href="{% url 'upload_musik' %}" class="nav-link">Upload musik</a>
+      </nav>
+
+      <section class="hero">
+        <p class="eyebrow">Koleksi</p>
+        <h1>Daftar Musik</h1>
+        <p class="hero-copy">Putar lagu yang sudah tersimpan di Azure Blob Storage tanpa menyimpannya di local.</p>
+      </section>
+
+      <section class="library-grid">
+        {% for music in musics %}
+          <article class="music-card">
+            <div class="music-meta">
+              <h2>{{ music.judul }}</h2>
+              <p>{{ music.penyanyi }}</p>
+            </div>
+
+            <div class="chips">
+              {% if music.genre %}<span>{{ music.genre }}</span>{% endif %}
+              {% if music.tahun %}<span>{{ music.tahun }}</span>{% endif %}
+              {% if music.media %}<span>{{ music.media }}</span>{% endif %}
+            </div>
+
+            <audio controls preload="none" class="music-player">
+              <source src="{{ music.playback_url }}" type="audio/mpeg" />
+              Browser kamu belum mendukung audio player.
+            </audio>
+
+            <div class="track-info">
+              <span>Durasi: {{ music.durasi|floatformat:0 }} detik</span>
+              <a href="{{ music.playback_url }}" target="_blank" rel="noopener">Buka file</a>
+            </div>
+
+            <div class="actions">
+              <form method="post" action="{% url 'delete_musik' music.id %}" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="delete-btn" onclick="return confirm('Yakin ingin menghapus &quot;{{ music.judul }}&quot;? File akan dihapus dari Azure Blob Storage.');">Hapus</button>
+              </form>
+            </div>
+          </article>
+        {% empty %}
+          <div class="card empty-state">
+            <h2>Belum ada musik</h2>
+            <p>Upload musik terlebih dahulu agar muncul di daftar ini.</p>
+            <a href="{% url 'upload_musik' %}" class="submit-btn inline-btn">Upload sekarang</a>
+          </div>
+        {% endfor %}
+      </section>
+    </main>
+  </body>
+</html>
