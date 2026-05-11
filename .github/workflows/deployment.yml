@@ -28,5 +28,7 @@ jobs:
           imageToDeploy: ${{ secrets.REGISTRY_URL }}/praktikum5-app:${{ github.sha }}
           containerAppName: 'praktikum5-app'
           resourceGroup: 'pplc-praktikum'
+          acrUsername: ${{ secrets.ACR_USERNAME }}
+          acrPassword: ${{ secrets.ACR_PASSWORD }}
 
 
