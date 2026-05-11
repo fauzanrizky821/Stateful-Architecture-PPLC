@@ -16,19 +16,24 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Build and push image
+      - name: Build and push image to ACR
         run: |
           docker login ${{ secrets.REGISTRY_URL }} -u ${{ secrets.ACR_USERNAME }} -p ${{ secrets.ACR_PASSWORD }}
           docker build -t ${{ secrets.REGISTRY_URL }}/praktikum5-app:${{ github.sha }} .
           docker push ${{ secrets.REGISTRY_URL }}/praktikum5-app:${{ github.sha }}
 
-      - name: Force Deploy with Admin Password
+      - name: Configure Registry Credentials
+        run: |
+          az containerapp registry set \
+            --name praktikum5-app \
+            --resource-group pplc-praktikum \
+            --server ${{ secrets.REGISTRY_URL }} \
+            --username ${{ secrets.ACR_USERNAME }} \
+            --password ${{ secrets.ACR_PASSWORD }}
+
+      - name: Update Container App Image
         run: |
           az containerapp update \
             --name praktikum5-app \
             --resource-group pplc-praktikum \
-            --image ${{ secrets.REGISTRY_URL }}/praktikum5-app:${{ github.sha }} \
-            --registry-server ${{ secrets.REGISTRY_URL }} \
-            --registry-username ${{ secrets.ACR_USERNAME }} \
-            --registry-password ${{ secrets.ACR_PASSWORD }}
-
+            --image ${{ secrets.REGISTRY_URL }}/praktikum5-app:${{ github.sha }}
