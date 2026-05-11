@@ -2,7 +2,7 @@ name: CI/CD Pipeline to Azure
 
 on:
   push:
-    [cite_start]branches: [ "main" ]
+    branches: [ "main" ]
 
 jobs:
   build-and-deploy:
@@ -26,8 +26,7 @@ jobs:
         uses: azure/container-apps-deploy-action@v1
         with:
           imageToDeploy: ${{ secrets.REGISTRY_URL }}/praktikum5-app:${{ github.sha }}
-          containerAppName: 'nama-container-app-kamu'
-          resourceGroup: 'nama-resource-group-kamu'
+          containerAppName: 'praktikum5-app'
+          resourceGroup: 'pplc-praktikum'
 
 
-          
